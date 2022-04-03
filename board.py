@@ -1,8 +1,10 @@
 import pygame
+import rect
+import numpy as np
 
 TILESIZE = 44
 BOARD_POS = (58, 185)
-
+EMPTY_SPACE = '_'
 
 def get_square_under_mouse(board):
     mouse_pos = pygame.Vector2(pygame.mouse.get_pos())
@@ -14,7 +16,6 @@ def get_square_under_mouse(board):
     except IndexError:
         pass
     return None, None, None
-
 
 def create_board_surf() -> object:
     board_surf = pygame.Surface((TILESIZE * 9, TILESIZE * 9))
@@ -34,7 +35,6 @@ def create_board_surf() -> object:
         xSpace = SPACE
     return board_surf
 
-
 def create_board():
     board = []
     for y in range(6):
@@ -43,7 +43,6 @@ def create_board():
             board[y].append(None)
 
     return board
-
 
 def get_X_Under_Mouse(x):
     if 56 <= x <= 100:
@@ -76,3 +75,120 @@ def get_Y_Under_Mouse(y):
         return 5
     else:
         return None
+
+def draw_game_pieces(pieces, screen): #game screen draw function
+    for i in pieces:
+        x,y,typePiece,spaces,color = i
+
+        rect = get_grapich_pos(x, y)
+        if(typePiece=="h"):
+            pygame.draw.rect(screen, color, pygame.Rect(rect.x, rect.y-3, 55+(55*spaces), 50))
+        else:
+            pygame.draw.rect(screen, color, pygame.Rect(rect.x, rect.y-7, 50, 55+(57*spaces)))
+
+def get_grapich_pos(x,y):
+    return rect.Rectangle(55+(y*57), 185+(x*57), 43, 45) #x, y, width, height
+
+def get_pieces(matrix): #return (x,y,h/v,spaces)
+    mControl = np.zeros((6, 6))
+    pieces = []
+    for y in range(6):
+        for x in range(6):
+            if mControl[y][x] == 0 and matrix[y][x].isalpha():
+                mControl[y][x] = 1
+
+                # Tipos de horizontales
+                # 2 derecha (3 casillas)
+                if (x + 1 <= 5 and x + 2 <= 5 and matrix[y][x + 1] == matrix[y][x] and matrix[y][x + 2] == matrix[y][
+                    x]):
+                    mControl[y][x + 1] = 1
+                    mControl[y][x + 2] = 1
+                    #print("horizontal: 2 derecha", matrix[y][x])
+                    pieces.append((y, x, "h", 2,get_piece_color(matrix[y][x])))
+
+                # 1 derecha (2 casillas)
+                elif (x + 1 <= 5 and matrix[y][x + 1] == matrix[y][x]):
+                    mControl[y][x + 1] = 1
+                    #print("horizontal: 1 derecha", matrix[y][x])
+                    pieces.append((y, x, "h", 1,get_piece_color(matrix[y][x])))
+
+                # es vertical
+
+                # Tipos de verticales
+                # 2 abajo
+                elif (y + 1 <= 5 and matrix[y + 1][x] == matrix[y][x] and y + 2 <= 5 and matrix[y + 2][x] == matrix[y][
+                    x]):
+                    mControl[y + 1][x] = 1
+                    mControl[y + 2][x] = 1
+                    #print("Vertical: 2 abajo ", matrix[y][x])
+                    pieces.append((y, x, "v", 2, get_piece_color(matrix[y][x])))
+
+                # 1 abajo
+                elif (y + 1 <= 5 and matrix[y + 1][x] == matrix[y][x]):
+                    mControl[y - 1][x] = 1
+                    #print("Vertical: 1 abajo ", matrix[y][x])
+                    pieces.append((y, x, "v", 1,get_piece_color(matrix[y][x])))
+    return pieces
+
+def get_piece_color(letter):
+    if letter.upper() == 'A':
+        return pygame.Color(173, 11, 9)
+    if letter.upper() == 'B':
+        return pygame.Color(72, 167, 201)
+    if letter.upper() == 'C':
+        return pygame.Color(122, 83, 167)
+    if letter.upper() == 'D':
+        return pygame.Color(252, 247, 102)
+    if letter.upper() == 'E':
+        return pygame.Color(240, 149, 51)
+    if letter.upper() == 'F':
+        return pygame.Color(1, 147, 116)
+    if letter.upper() == 'G':
+        return pygame.Color(38, 173, 97)
+    if letter.upper() == 'H':
+        return pygame.Color(170, 91, 212)
+    if letter.upper() == 'I':
+        return pygame.Color(0, 159, 172)
+    if letter.upper() == 'J':
+        return pygame.Color(1, 0, 0)
+
+    return pygame.Color(45, 45, 45)
+
+def draw_config_pieces(screen, pieces):
+    for piece in pieces:
+        piece.draw(screen)
+
+def generateMatrix(configPieces):
+    #matrix = np.empty((6, 6))
+    matrix = [[EMPTY_SPACE] * 6 for _ in range(6)]
+
+    for piece in configPieces:
+
+        if piece.xMatrixPos != None and piece.yMatrixPos != None:
+            #determine type (car or truck) and orientation (horizontal or vertical)
+
+            #vertical car
+            if piece.direction == "v" and piece.type == "c":
+                matrix[piece.xMatrixPos][piece.yMatrixPos] = piece.letter
+                matrix[piece.xMatrixPos+1][piece.yMatrixPos] = piece.letter
+
+            # vertical truck
+            elif piece.direction == "v" and piece.type == "t":
+                matrix[piece.xMatrixPos][piece.yMatrixPos] = piece.letter
+                matrix[piece.xMatrixPos + 1][piece.yMatrixPos] = piece.letter
+                matrix[piece.xMatrixPos + 2][piece.yMatrixPos] = piece.letter
+
+            #horizontal car
+            elif piece.direction == "h" and piece.type == "c":
+                matrix[piece.xMatrixPos][piece.yMatrixPos] = piece.letter
+                matrix[piece.xMatrixPos][piece.yMatrixPos+1] = piece.letter
+
+            #horizontal truck
+            elif piece.direction == "h" and piece.type == "t":
+                matrix[piece.xMatrixPos][piece.yMatrixPos] = piece.letter
+                matrix[piece.xMatrixPos][piece.yMatrixPos+ 1] = piece.letter
+                matrix[piece.xMatrixPos][piece.yMatrixPos+ 2] = piece.letter
+
+
+
+    return matrix
