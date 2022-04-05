@@ -1,6 +1,7 @@
 import pygame
 import rect
 import numpy as np
+import random
 
 TILESIZE = 44
 BOARD_POS = (58, 185)
@@ -150,9 +151,31 @@ def get_piece_color(letter):
     if letter.upper() == 'I':
         return pygame.Color(0, 159, 172)
     if letter.upper() == 'J':
-        return pygame.Color(1, 0, 0)
+        return pygame.Color(8, 92, 68)
+    if letter.upper() == 'K':
+        return pygame.Color(255, 128, 249)
+    if letter.upper() == 'L':
+        return pygame.Color(255, 160, 128)
+    if letter.upper() == 'M':
+        return pygame.Color(79, 1, 32)
+    if letter.upper() == 'N':
+        return pygame.Color(76, 79, 1)
+    if letter.upper() == 'Ñ':
+        return pygame.Color(117, 255, 248)
+    if letter.upper() == 'O':
+        return pygame.Color(92, 35, 35)
+    if letter.upper() == 'P':
+        return pygame.Color(41, 35, 92)
+    if letter.upper() == 'Q':
+        return pygame.Color(92, 35, 83)
+    if letter.upper() == 'R':
+        return pygame.Color(131, 125, 181)
+    if letter.upper() == 'S':
+        return pygame.Color(50, 84, 76)
+    if letter.upper() == 'T':
+        return pygame.Color(119, 255, 0)
 
-    return pygame.Color(45, 45, 45)
+    return pygame.Color(random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
 
 def draw_config_pieces(screen, pieces):
     for piece in pieces:

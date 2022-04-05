@@ -37,7 +37,7 @@ def get_board():
       if num_attempts > 1000:
         # We have enough cars anyway.
         break
-  print(board)
+
   return board
 
 
@@ -127,13 +127,17 @@ def search(board):
 
   return []
 
-while True:
-  board = get_board()
-  path = search(board)
 
+def solve(board):
+  path = search(board)
   print('Solved length: {}'.format(len(path)))
-  print(PLIES)
-  if len(path) >= 15:
+  print("Piles", PLIES)
+
+  if len(path) >= 1:
     print('\n\n'.join(board_str(_) for _ in path))
-    print(path)
-    break
+    print("solution", path)
+    return path
+  else:
+    return []
+
+

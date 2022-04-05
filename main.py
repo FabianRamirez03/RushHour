@@ -6,6 +6,7 @@ import pygame
 import button
 import board
 import pieces
+import AI
 
 # Constants
 SCREEN_WIDTH = 700
@@ -159,11 +160,8 @@ def drawConfigScene(screen):
     if play_btn.draw(screen) == True:
         configMatrix = board.generateMatrix(configPieces)  # => generate config matrix <=
         print("Config Matrix:\n", configMatrix)
-        print('\n'.join(''.join(_) for _ in configMatrix))
-
-        # send configMatrix to IA
-        # store result in "matrix" variable here
-        # matrix = IA.solver(configMatrix)
+        #print('\n'.join(''.join(_) for _ in configMatrix))
+        matrix = AI.solve(configMatrix)
         sceneIndex = 2  # going to game scene
 
 
@@ -173,7 +171,8 @@ def drawGameScene(screen):
     screen.fill((255, 255, 255))
     screen.blit(board_img, (10, 120))
     screen.blit(header_img, (180, 10))
-    if len(matrix) > 0:
+
+    if len(matrix) > 0 :
 
         pieces = board.get_pieces(matrix[step])
         board.draw_game_pieces(pieces, screen)
@@ -183,7 +182,11 @@ def drawGameScene(screen):
 
         if prev_btn.draw(screen) == True and step > 0:
             step = step - 1
-
+    else:
+        text = font.render('Impossible', True, (255,255,255), (0,0,0))
+        textRect = text.get_rect()
+        textRect.center = (540, 315)
+        screen.blit(text,textRect)
 
 # Select which scene draw according to scene index
 def drawScene(screen):
@@ -247,6 +250,7 @@ while running:
             if event.key == pygame.K_ESCAPE:
                 configPieces = []
                 letter = 'A'
+                step = 0
                 sceneIndex = sceneIndex - 1  # going back
 
         elif event.type == pygame.MOUSEBUTTONDOWN and sceneIndex == 1:
@@ -256,7 +260,6 @@ while running:
                     piece.clicked = True
                     print("piece letter: ", piece.letter)
                     valid = False
-
 
         elif event.type == pygame.MOUSEMOTION and sceneIndex == 1:
             pos = pygame.mouse.get_pos()
