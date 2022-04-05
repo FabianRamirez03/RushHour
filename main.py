@@ -37,6 +37,7 @@ ver_car_img = pygame.image.load(r'./images/vertical_car_img.png').convert_alpha(
 hor_car_img = pygame.image.load(r'./images/horizontal_car_img.png').convert_alpha()
 ver_truck_img = pygame.image.load(r'./images/vertical_truck_img.png').convert_alpha()
 hor_truck_img = pygame.image.load(r'./images/horizontal_truck_img.png').convert_alpha()
+trash_can_img = pygame.image.load(r'./images/trash_can.png').convert_alpha()
 
 # create button instances
 start_btn = button.Button(250, 350, start_img, 1)
@@ -127,6 +128,7 @@ def drawConfigScene(screen):
     screen.blit(header_img, (180, 10))
     screen.blit(board_surf, (44, 172))
     screen.blit(board_img, (10, 120))
+    screen.blit(trash_can_img, (338, 527))
     # ---
     # -------
     piece, x, y = board.get_square_under_mouse(game_board)
@@ -204,7 +206,6 @@ def drawScene(screen):
 
 def placePieceOnMatrix(piece, y, x):
     global board_matrix
-    print(x,y)
     cont = 0
     if piece.type == 't':
         length = 3
@@ -235,6 +236,15 @@ def clearCarFromMatrix(letter, length, board):
             break
         y += 1
 
+def delete_piece(piece):
+    global valid
+    if piece.type == 't':
+        length = 3
+    if piece.type == 'c':
+        length = 2
+    clearCarFromMatrix(piece.letter, length, board_matrix)
+    piece.delete()
+    valid = True
 
 
 # Run until the user asks to quit
@@ -269,7 +279,15 @@ while running:
                     piece.rect.y = piece.rect.y + (pos[1] - piece.rect.y)
         elif event.type == pygame.MOUSEBUTTONUP and sceneIndex == 1:
             piece, y, x = board.get_square_under_mouse(game_board)
-            if x != None:
+            print(x, y)
+            pos = pygame.mouse.get_pos()
+            if 335 <= pos[0] <= 385 and 525 <= pos[1] <= 580:
+                for piece in configPieces:
+                    if piece.clicked:
+                        delete_piece(piece)
+                        print(board_matrix)
+                        print('delete piece')
+            if x is not None:
                 for piece in configPieces:
                     if piece.clicked:
                         piece.rect.x = board.get_grapich_pos(x, y).x
@@ -277,7 +295,6 @@ while running:
                         piece.xMatrixPos = x
                         piece.yMatrixPos = y
                         placePieceOnMatrix(piece, x, y)
-                        print(board_matrix)
                         piece.clicked = False
                         valid = True
 

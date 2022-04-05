@@ -74,6 +74,8 @@ def get_Y_Under_Mouse(y):
         return 4
     if 470 <= y <= 514:
         return 5
+    if 525 <= y <= 580:
+        return 6
     else:
         return None
 

@@ -18,8 +18,14 @@ class Piece(pygame.sprite.Sprite):
         self.type = typePiece
         self.xMatrixPos = None
         self.yMatrixPos = None
+        self.rectDraw = None
 
     def draw(self, surface):
         # draw piece on screen
         rect = pygame.rect.Rect(self.rect.x, self.rect.y, self.width, self.height)
         pygame.draw.rect(surface, board.get_piece_color(self.letter), rect)
+
+    def delete(self):
+        self.rect.x = 1000
+        self.rect.y = 1000
+        self.clicked = False
