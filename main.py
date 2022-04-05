@@ -207,6 +207,7 @@ def placePieceOnMatrix(piece, y, x):
         length = 3
     if piece.type == 'c':
         length = 2
+    clearCarFromMatrix(piece.letter, length, board_matrix)
     if piece.direction == 'h':
         while cont < length:
             board_matrix[y][x+cont] = piece.letter
@@ -215,6 +216,22 @@ def placePieceOnMatrix(piece, y, x):
         while cont < length:
             board_matrix[y+cont][x] = piece.letter
             cont += 1
+
+def clearCarFromMatrix(letter, length, board):
+    cont = 0
+    x = 0
+    y = 0
+    while y < 6:
+        x = 0
+        while x < 6:
+            if board[y][x] == letter:
+                board[y][x] = EMPTY_SPACE
+                cont += 1
+            x += 1
+        if cont == length:
+            break
+        y += 1
+
 
 
 # Run until the user asks to quit
