@@ -60,6 +60,7 @@ hor_car_btn = button.Button(485, 450, hor_car_img, 1)
 configPieces = []
 letter = 'A'
 valid = True  # quick fix bug: create multiple config pieces
+pieceClicked = False
 
 font = pygame.font.SysFont("Times New Roman", 30)
 
@@ -168,7 +169,7 @@ def drawConfigScene(screen):
     if play_btn.draw(screen) == True:
         configMatrix = board.generateMatrix(configPieces)  # => generate config matrix <=
         print("Config Matrix:\n", configMatrix)
-        # print('\n'.join(''.join(_) for _ in configMatrix))
+        #print('\n'.join(''.join(_) for _ in configMatrix))
         matrix = AI.solve(configMatrix)
         sceneIndex = 2  # going to game scene
 
@@ -228,7 +229,6 @@ def placePieceOnMatrix(piece, y, x):
             board_matrix[y + cont][x] = piece.letter
             cont += 1
 
-
 def clearCarFromMatrix(letter, length, board):
     cont = 0
     x = 0
@@ -243,7 +243,6 @@ def clearCarFromMatrix(letter, length, board):
         if cont == length:
             break
         y += 1
-
 
 def delete_piece(piece):
     global valid
@@ -275,9 +274,22 @@ def fix_Y_outOfIndex(piece, y):
                 y = 4
     return y
 
+def noCollidepoint(piece):
+    for otherPieces in configPieces:
+        if otherPieces != piece and otherPieces.rect.colliderect(piece.rect):
+            return False
+    return True
+
+def reset():
+    configPieces = []
+    board_matrix = [[EMPTY_SPACE] * N for _ in range(N)]
+    letter = 'A'
+    valid = True
+    step = 0
+    pieceClicked = False
+
 # Run until the user asks to quit
 running = True
-# selected_piece = None
 while running:
     clock = pygame.time.Clock()
 
@@ -286,45 +298,53 @@ while running:
             running = False
         elif event.type == pygame.KEYDOWN and sceneIndex != 0:
             if event.key == pygame.K_ESCAPE:
-                configPieces = []
-                letter = 'A'
-                step = 0
+                reset()
                 sceneIndex = sceneIndex - 1  # going back
 
-        elif event.type == pygame.MOUSEBUTTONDOWN and sceneIndex == 1:
+        elif event.type == pygame.MOUSEBUTTONDOWN and sceneIndex == 1 and pieceClicked == False:
+            print(pieceClicked)
             pos = pygame.mouse.get_pos()
             for piece in configPieces:
                 if piece.rect.collidepoint(event.pos):
                     piece.clicked = True
                     print("piece letter: ", piece.letter)
                     valid = False
+                    pieceClicked = True
+
+
 
         elif event.type == pygame.MOUSEMOTION and sceneIndex == 1:
             pos = pygame.mouse.get_pos()
             for piece in configPieces:
                 if piece.clicked:
-                    piece.rect.x = piece.rect.x + (pos[0] - piece.rect.x)
-                    piece.rect.y = piece.rect.y + (pos[1] - piece.rect.y)
-        elif event.type == pygame.MOUSEBUTTONUP and sceneIndex == 1:
+                    piece.rect.x = (piece.rect.x + (pos[0] - piece.rect.x)) - 20
+                    piece.rect.y = (piece.rect.y + (pos[1] - piece.rect.y)) - 20
+
+        elif event.type == pygame.MOUSEBUTTONUP and sceneIndex == 1 and pieceClicked==True:
             piece, y, x = board.get_square_under_mouse(game_board)
             pos = pygame.mouse.get_pos()
             if 335 <= pos[0] <= 385 and 525 <= pos[1] <= 580:
                 for piece in configPieces:
                     if piece.clicked:
                         delete_piece(piece)
+                        configPieces.remove(piece)
+                        pieceClicked = False
+
             if x is not None:
                 for piece in configPieces:
-                    if piece.clicked:
+                    if piece.clicked and noCollidepoint(piece):
                         print(x, y)
                         y = fix_X_outOfIndex(piece, y)
                         x = fix_Y_outOfIndex(piece, x)
-                        piece.rect.x = board.get_grapich_pos(x, y).x
-                        piece.rect.y = board.get_grapich_pos(x, y).y - 1
+                        piece.rect.x = board.get_graphic_pos(x, y).x
+                        piece.rect.y = board.get_graphic_pos(x, y).y - 1
                         piece.xMatrixPos = x
                         piece.yMatrixPos = y
                         placePieceOnMatrix(piece, x, y)
                         piece.clicked = False
                         valid = True
+                        pieceClicked = False
+
 
     # Fill the background with white
     screen.fill((255, 255, 255))

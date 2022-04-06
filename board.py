@@ -83,13 +83,13 @@ def draw_game_pieces(pieces, screen): #game screen draw function
     for i in pieces:
         x,y,typePiece,spaces,color = i
 
-        rect = get_grapich_pos(x, y)
+        rect = get_graphic_pos(x, y)
         if(typePiece=="h"):
             pygame.draw.rect(screen, color, pygame.Rect(rect.x, rect.y-3, 55+(55*spaces), 50))
         else:
             pygame.draw.rect(screen, color, pygame.Rect(rect.x, rect.y-7, 50, 55+(57*spaces)))
 
-def get_grapich_pos(x,y):
+def get_graphic_pos(x,y):
     return rect.Rectangle(55+(y*57), 185+(x*57), 43, 45) #x, y, width, height
 
 def get_pieces(matrix): #return (x,y,h/v,spaces)
@@ -177,14 +177,13 @@ def get_piece_color(letter):
     if letter.upper() == 'T':
         return pygame.Color(119, 255, 0)
 
-    return pygame.Color(random.randint(0, 255),random.randint(0, 255),random.randint(0, 255))
+    return pygame.Color(173, 135, 31)
 
 def draw_config_pieces(screen, pieces):
     for piece in pieces:
         piece.draw(screen)
 
 def generateMatrix(configPieces):
-    #matrix = np.empty((6, 6))
     matrix = [[EMPTY_SPACE] * 6 for _ in range(6)]
 
     for piece in configPieces:
@@ -213,7 +212,5 @@ def generateMatrix(configPieces):
                 matrix[piece.xMatrixPos][piece.yMatrixPos] = piece.letter
                 matrix[piece.xMatrixPos][piece.yMatrixPos+ 1] = piece.letter
                 matrix[piece.xMatrixPos][piece.yMatrixPos+ 2] = piece.letter
-
-
 
     return matrix
