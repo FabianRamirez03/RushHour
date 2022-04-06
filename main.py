@@ -162,7 +162,7 @@ def drawConfigScene(screen):
     if play_btn.draw(screen) == True:
         configMatrix = board.generateMatrix(configPieces)  # => generate config matrix <=
         print("Config Matrix:\n", configMatrix)
-        #print('\n'.join(''.join(_) for _ in configMatrix))
+        # print('\n'.join(''.join(_) for _ in configMatrix))
         matrix = AI.solve(configMatrix)
         sceneIndex = 2  # going to game scene
 
@@ -174,7 +174,7 @@ def drawGameScene(screen):
     screen.blit(board_img, (10, 120))
     screen.blit(header_img, (180, 10))
 
-    if len(matrix) > 0 :
+    if len(matrix) > 0:
 
         pieces = board.get_pieces(matrix[step])
         board.draw_game_pieces(pieces, screen)
@@ -185,10 +185,11 @@ def drawGameScene(screen):
         if prev_btn.draw(screen) == True and step > 0:
             step = step - 1
     else:
-        text = font.render('Impossible', True, (255,255,255), (0,0,0))
+        text = font.render('Impossible', True, (255, 255, 255), (0, 0, 0))
         textRect = text.get_rect()
         textRect.center = (540, 315)
-        screen.blit(text,textRect)
+        screen.blit(text, textRect)
+
 
 # Select which scene draw according to scene index
 def drawScene(screen):
@@ -214,12 +215,13 @@ def placePieceOnMatrix(piece, y, x):
     clearCarFromMatrix(piece.letter, length, board_matrix)
     if piece.direction == 'h':
         while cont < length:
-            board_matrix[y][x+cont] = piece.letter
+            board_matrix[y][x + cont] = piece.letter
             cont += 1
     if piece.direction == 'v':
         while cont < length:
-            board_matrix[y+cont][x] = piece.letter
+            board_matrix[y + cont][x] = piece.letter
             cont += 1
+
 
 def clearCarFromMatrix(letter, length, board):
     cont = 0
@@ -236,6 +238,7 @@ def clearCarFromMatrix(letter, length, board):
             break
         y += 1
 
+
 def delete_piece(piece):
     global valid
     if piece.type == 't':
@@ -246,6 +249,25 @@ def delete_piece(piece):
     piece.delete()
     valid = True
 
+def fix_X_outOfIndex(piece, x):
+    if piece.direction == 'h':
+        if piece.type == 't':
+            if x == 5 or x == 4:
+                x = 3
+        if piece.type == 'c':
+            if x == 5:
+                x = 4
+    return x
+
+def fix_Y_outOfIndex(piece, y):
+    if piece.direction != 'h':
+        if piece.type == 't':
+            if y == 5 or y == 4:
+                y = 3
+        if piece.type == 'c':
+            if y == 5:
+                y = 4
+    return y
 
 # Run until the user asks to quit
 running = True
@@ -279,17 +301,17 @@ while running:
                     piece.rect.y = piece.rect.y + (pos[1] - piece.rect.y)
         elif event.type == pygame.MOUSEBUTTONUP and sceneIndex == 1:
             piece, y, x = board.get_square_under_mouse(game_board)
-            print(x, y)
             pos = pygame.mouse.get_pos()
             if 335 <= pos[0] <= 385 and 525 <= pos[1] <= 580:
                 for piece in configPieces:
                     if piece.clicked:
                         delete_piece(piece)
-                        print(board_matrix)
-                        print('delete piece')
             if x is not None:
                 for piece in configPieces:
                     if piece.clicked:
+                        print(x, y)
+                        y = fix_X_outOfIndex(piece, y)
+                        x = fix_Y_outOfIndex(piece, x)
                         piece.rect.x = board.get_grapich_pos(x, y).x
                         piece.rect.y = board.get_grapich_pos(x, y).y - 1
                         piece.xMatrixPos = x
