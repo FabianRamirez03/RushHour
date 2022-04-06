@@ -1,10 +1,125 @@
+import pygame
 import random
+import time
 
 N = 6
 EMPTY_SPACE = '_'
 ICE_CREAM_TRUCK = 'A'
 START_ROW = 2
 
+# Game logic variables
+global state_counter
+
+# GUI constants
+WINDOW_WIDTH = 1920
+WINDOW_HEIGHT = 1080
+BOARD_SIZE = 1000
+TILE_SIZE = 60
+TOP_MARGIN = 10
+LEFT_MARGIN = 175
+# Colours
+RED = (210, 43, 43)
+PINK = (255, 207, 223)
+GREEN = (198, 213, 126)
+SKY_BLUE = (165, 222, 229)
+BLUE = (5, 102, 118)
+PURPLE = (114, 106, 149)
+YELLOW = (250, 240, 175)
+ORANGE = (254, 179, 119)
+BROWN = (125, 90, 90)
+TILE = (128,128,128)
+BOARD = (100, 100, 100)
+BLACK = (40, 40, 40)
+
+# Car colour dictionary
+CAR_COLOURS = {
+  "A": RED,
+  "B": BLUE,
+  "c": GREEN,
+  "D": PURPLE,
+  "e": YELLOW,
+  "f": BLACK,
+  "g": ORANGE,
+  "h": SKY_BLUE,
+  "i": BROWN,
+  "j": PINK,
+}
+
+def textElements(message, font):
+  textBox = font.render(message, True, BLACK)
+  return textBox, textBox.get_rect()
+
+def create_button(message, color, hovered_color, pos_x, pos_y, width, height, surface, function, arguments):
+  mouseX, mouseY = pygame.mouse.get_pos()
+  click = pygame.mouse.get_pressed()
+
+  if (pos_x + width > mouseX > pos_x and pos_y + height > mouseY > pos_y):
+    pygame.draw.rect(surface, hovered_color, (pos_x, pos_y, width, height))
+    if (click[0] == 1 and function != None):
+      if (arguments != None):
+        function(arguments)
+      else:
+        function()
+  else:
+    pygame.draw.rect(surface, color, (pos_x, pos_y, width, height))
+  textMsg, textBox = textElements(message, pygame.font.Font("freesansbold.ttf", 30))
+  textBox.center = (int((pos_x + (width / 2))), int((pos_y + (height / 2))))
+  surface.blit(textMsg, textBox)
+
+def start_game():
+  global state_counter
+  pygame.init()
+  surface = pygame.display.set_mode((BOARD_SIZE, BOARD_SIZE))
+  state_counter = 0
+  states_list = [[["_","f","h","_","g","_"], ["e","f","h","_","g","_"], ["e","A","A","_","_","_"], ["_","_","_","c","i","j"], ["_","B","B","c","i","j"], ["_","D","D","c","_","j"]], [["_","A","B","_","g","_"], ["e","f","h","_","g","_"], ["e","A","A","_","h","_"], ["_","_","_","c","i","j"], ["_","c","B","c","i","j"], ["_","D","D","c","_","j"]], [["_","f","h","_","g","_"], ["e","f","h","_","g","_"], ["e","A","A","_","_","_"], ["_","_","_","c","i","j"], ["_","B","B","c","i","j"], ["_","D","D","c","_","j"]]]
+  state_qty = len(states_list) - 1
+
+  while(True):
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        pygame.quit()
+        quit()
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_ESCAPE:
+          quit()
+    current_state = states_list[state_counter]
+
+    draw_board(surface)
+    draw_cars(surface, current_state)
+    pygame.display.flip()
+    create_button("Next", YELLOW, YELLOW, 800, 300, 150, 30, surface, get_next_state, state_qty)
+    create_button("Previous", GREEN, GREEN, 0, 300, 150, 30, surface, get_previous_state, None)
+    pygame.display.update()
+
+def draw_board(surface):
+  pygame.draw.rect(surface, BOARD, pygame.Rect(LEFT_MARGIN, TOP_MARGIN, 600, 600))
+  for y in range(0, 6):
+    for x in range(0, 6):
+      pygame.draw.rect(surface, TILE, pygame.Rect(LEFT_MARGIN + 20 + x * 100, TOP_MARGIN + 20 + y * 100, 60, 60), 5)
+
+def draw_cars(surface, board_state):
+  for y in range(0, 6):
+    for x in range(0, 6):
+      if board_state[y][x] != '_':
+        colour = CAR_COLOURS[board_state[y][x]]
+        pygame.draw.rect(surface, colour, pygame.Rect(LEFT_MARGIN + x*100, TOP_MARGIN+y*100, 100, 100))
+
+
+def get_next_state(state_qty):
+  print("Next")
+  global state_counter
+  if state_counter < state_qty:
+    state_counter += 1
+  time.sleep(0.15)
+  return
+
+def get_previous_state():
+  print("Previous")
+  global state_counter
+  if state_counter > 0:
+    state_counter -= 1
+  time.sleep(0.15)
+  return
 
 def get_board():
   # Uppercase is horizontal, lowercase is vertical.
