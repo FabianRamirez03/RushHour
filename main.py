@@ -39,6 +39,12 @@ ver_truck_img = pygame.image.load(r'./images/vertical_truck_img.png').convert_al
 hor_truck_img = pygame.image.load(r'./images/horizontal_truck_img.png').convert_alpha()
 trash_can_img = pygame.image.load(r'./images/trash_can.png').convert_alpha()
 
+#rect images for pieces
+rect_car_v = pygame.image.load(r'./images/rect_car_v.png').convert_alpha()
+rect_truck_v = pygame.image.load(r'./images/rect_truck_v.png').convert_alpha()
+rect_car_h = pygame.image.load(r'./images/rect_car_h.png').convert_alpha()
+rect_truck_h = pygame.image.load(r'./images/rect_truck_h.png').convert_alpha()
+
 # create button instances
 start_btn = button.Button(250, 350, start_img, 1)
 play_btn = button.Button(480, 515, play_img, 1)
@@ -138,22 +144,22 @@ def drawConfigScene(screen):
         pygame.draw.rect(screen, (245, 152, 33, 50), rect, 2)
 
     if ver_car_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(540, 142, 50, 105, letter, "v", "c", ver_car_img);
+        newPiece = pieces.Piece(540, 142, 50, 105, letter, "v", "c", rect_car_v);
         letter = chr(ord(letter) + 1)
         configPieces.append(newPiece)
 
     elif ver_truck_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(540, 80, 50, 162, letter, "v", "t", ver_car_img);
+        newPiece = pieces.Piece(540, 80, 50, 162, letter, "v", "t", rect_truck_v);
         letter = chr(ord(letter) + 1)
         configPieces.append(newPiece)
 
     elif hor_car_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(515, 182, 105, 50, letter, "h", "c", ver_car_img);
+        newPiece = pieces.Piece(515, 182, 105, 50, letter, "h", "c", rect_car_h);
         letter = chr(ord(letter) + 1)
         configPieces.append(newPiece)
 
     elif hor_truck_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(486, 182, 163, 50, letter, "h", "t", ver_car_img);
+        newPiece = pieces.Piece(486, 182, 163, 50, letter, "h", "t", rect_truck_h);
         letter = chr(ord(letter) + 1)
         configPieces.append(newPiece)
 
