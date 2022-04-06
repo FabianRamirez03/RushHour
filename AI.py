@@ -242,13 +242,11 @@ def search(board):
 
   return []
 
-start_game()
-
-"""while True:
+while True:
   board = get_board()
   path = search(board)
   print('Solved length: {}'.format(len(path)))
   print(PLIES)
   if len(path) >= 15:
     print('\n\n'.join(board_str(_) for _ in path))
-    break"""
+    break
