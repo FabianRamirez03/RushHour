@@ -61,7 +61,7 @@ configPieces = []
 letter = 'A'
 valid = True  # quick fix bug: create multiple config pieces
 pieceClicked = False
-
+isPiecePlaced = True
 font = pygame.font.SysFont("Times New Roman", 30)
 
 # !!!!!!!!!!!!!!!!!!!
@@ -129,7 +129,7 @@ def drawMenuScene(screen):
 
 # Inital Config Scene
 def drawConfigScene(screen):
-    global running, sceneIndex, configPieces, letter, matrix
+    global running, sceneIndex, configPieces, letter, matrix, isPiecePlaced
     screen.fill((255, 255, 255))
 
     screen.blit(header_img, (180, 10))
@@ -144,25 +144,30 @@ def drawConfigScene(screen):
                 TILESIZE)
         pygame.draw.rect(screen, (245, 152, 33, 50), rect, 2)
 
-    if ver_car_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(540, 142, 50, 105, letter, "v", "c", rect_car_v);
-        letter = chr(ord(letter) + 1)
-        configPieces.append(newPiece)
+    if isPiecePlaced:
+        if ver_car_btn.draw(screen) == True and valid == True:
+            newPiece = pieces.Piece(540, 142, 50, 105, letter, "v", "c", rect_car_v);
+            letter = chr(ord(letter) + 1)
+            configPieces.append(newPiece)
+            isPiecePlaced = False
 
-    elif ver_truck_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(540, 80, 50, 162, letter, "v", "t", rect_truck_v);
-        letter = chr(ord(letter) + 1)
-        configPieces.append(newPiece)
+        elif ver_truck_btn.draw(screen) == True and valid == True:
+            newPiece = pieces.Piece(540, 80, 50, 162, letter, "v", "t", rect_truck_v);
+            letter = chr(ord(letter) + 1)
+            configPieces.append(newPiece)
+            isPiecePlaced = False
 
-    elif hor_car_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(515, 182, 105, 50, letter, "h", "c", rect_car_h);
-        letter = chr(ord(letter) + 1)
-        configPieces.append(newPiece)
+        elif hor_car_btn.draw(screen) == True and valid == True:
+            newPiece = pieces.Piece(515, 182, 105, 50, letter, "h", "c", rect_car_h);
+            letter = chr(ord(letter) + 1)
+            configPieces.append(newPiece)
+            isPiecePlaced = False
 
-    elif hor_truck_btn.draw(screen) == True and valid == True:
-        newPiece = pieces.Piece(486, 182, 163, 50, letter, "h", "t", rect_truck_h);
-        letter = chr(ord(letter) + 1)
-        configPieces.append(newPiece)
+        elif hor_truck_btn.draw(screen) == True and valid == True:
+            newPiece = pieces.Piece(486, 182, 163, 50, letter, "h", "t", rect_truck_h);
+            letter = chr(ord(letter) + 1)
+            configPieces.append(newPiece)
+            isPiecePlaced = False
 
     board.draw_config_pieces(screen, configPieces)
 
@@ -341,6 +346,7 @@ while running:
                         piece.xMatrixPos = x
                         piece.yMatrixPos = y
                         placePieceOnMatrix(piece, x, y)
+                        isPiecePlaced = True
                         piece.clicked = False
                         valid = True
                         pieceClicked = False
