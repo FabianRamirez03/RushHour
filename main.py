@@ -250,7 +250,7 @@ def clearCarFromMatrix(letter, length, board):
         y += 1
 
 def delete_piece(piece):
-    global valid
+    global valid,isPiecePlaced, letter
     if piece.type == 't':
         length = 3
     if piece.type == 'c':
@@ -258,6 +258,9 @@ def delete_piece(piece):
     clearCarFromMatrix(piece.letter, length, board_matrix)
     piece.delete()
     valid = True
+    isPiecePlaced = True
+    if piece.letter.upper() == 'A':
+        reset()
 
 def fix_X_outOfIndex(piece, x):
     if piece.direction == 'h':
@@ -286,12 +289,14 @@ def noCollidepoint(piece):
     return True
 
 def reset():
+    global configPieces, board_matrix, letter, valid, step, pieceClicked, isPiecePlaced
     configPieces = []
     board_matrix = [[EMPTY_SPACE] * N for _ in range(N)]
     letter = 'A'
     valid = True
     step = 0
     pieceClicked = False
+    isPiecePlaced = True
 
 # Run until the user asks to quit
 running = True
@@ -332,8 +337,9 @@ while running:
                 for piece in configPieces:
                     if piece.clicked:
                         delete_piece(piece)
-                        configPieces.remove(piece)
-                        pieceClicked = False
+                        if len(configPieces) > 0:
+                            configPieces.remove(piece)
+                            pieceClicked = False
 
             if x is not None:
                 for piece in configPieces:
