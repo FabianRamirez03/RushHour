@@ -174,7 +174,6 @@ def drawConfigScene(screen):
     if play_btn.draw(screen) == True:
         configMatrix = board.generateMatrix(configPieces)  # => generate config matrix <=
         print("Config Matrix:\n", configMatrix)
-        #print('\n'.join(''.join(_) for _ in configMatrix))
         matrix = AI.solve(configMatrix)
         sceneIndex = 2  # going to game scene
 
@@ -312,7 +311,6 @@ while running:
                 sceneIndex = sceneIndex - 1  # going back
 
         elif event.type == pygame.MOUSEBUTTONDOWN and sceneIndex == 1 and pieceClicked == False:
-            print(pieceClicked)
             pos = pygame.mouse.get_pos()
             for piece in configPieces:
                 if piece.rect.collidepoint(event.pos):
@@ -344,7 +342,6 @@ while running:
             if x is not None:
                 for piece in configPieces:
                     if piece.clicked and noCollidepoint(piece):
-                        print(x, y)
                         y = fix_X_outOfIndex(piece, y)
                         x = fix_Y_outOfIndex(piece, x)
                         piece.rect.x = board.get_graphic_pos(x, y).x

@@ -130,12 +130,12 @@ def search(board):
 
 def solve(board):
   path = search(board)
-  print('Solved length: {}'.format(len(path)))
-  print("Piles", PLIES)
+  #print('Solved length: {}'.format(len(path)))
+  #print("Piles", PLIES)
 
   if len(path) >= 1:
-    print('\n\n'.join(board_str(_) for _ in path))
-    print("solution", path)
+    #print('\n\n'.join(board_str(_) for _ in path))
+    #print("solution", path)
     return path
   else:
     return []
